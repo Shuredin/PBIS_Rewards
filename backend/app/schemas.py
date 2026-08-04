@@ -7,6 +7,7 @@ class UserCreate(BaseModel):
     email: str
     role: str
 
+
 class UserResponse(BaseModel):
     id: int
     first_name: str
@@ -17,6 +18,7 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class RewardCreate(BaseModel):
     student_id: int
