@@ -80,3 +80,18 @@ def give_reward(
 @app.get("/transactions")
 def get_transactions(db: Session = Depends(get_db)):
     return db.query(models.Transaction).all()
+
+
+@app.get("/students/{student_id}")
+def get_student(
+    student_id: int,
+    db: Session = Depends(get_db)
+):
+    student = db.query(models.User).filter(
+        models.User.id == student_id
+    ).first()
+
+    if not student:
+        return {"error": "Student not found"}
+
+    return student
