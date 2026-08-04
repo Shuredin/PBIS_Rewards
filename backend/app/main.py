@@ -43,6 +43,9 @@ def create_user(
 
     return new_user
 
+@app.get("/users")
+def get_users(db: Session = Depends(get_db)):
+    return db.query(models.User).all()
 
 @app.post("/reward")
 def give_reward(
@@ -73,3 +76,7 @@ def give_reward(
         "student": student.first_name,
         "new_points": student.points
     }
+
+@app.get("/transactions")
+def get_transactions(db: Session = Depends(get_db)):
+    return db.query(models.Transaction).all()
