@@ -5,12 +5,20 @@ from .database import engine, Base, SessionLocal
 from . import models, schemas
 
 from .ml_model import predict_reinforcement
+from fastapi.middleware.cors import CORSMiddleware
 
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db():
     db = SessionLocal()
@@ -83,6 +91,13 @@ def give_reward(
 def get_transactions(db: Session = Depends(get_db)):
     return db.query(models.Transaction).all()
 
+@app.get("/students")
+def get_students(db: Session = Depends(get_db)):
+    students = db.query(models.User).filter(
+        models.User.role == "student"
+    ).all()
+
+    return students
 
 @app.get("/students/{student_id}")
 def get_student(
