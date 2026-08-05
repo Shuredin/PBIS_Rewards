@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 from .database import engine, Base, SessionLocal
 from . import models, schemas
 
+from .ml_model import predict_reinforcement
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -95,3 +97,37 @@ def get_student(
         return {"error": "Student not found"}
 
     return student
+
+
+@app.get("/students/{student_id}/reinforcement")
+def check_reinforcement(
+    student_id: int,
+    db: Session = Depends(get_db)
+):
+
+    student = db.query(models.User).filter(
+        models.User.id == student_id
+    ).first()
+
+
+    if not student:
+        return {"error": "Student not found"}
+
+
+    rewards = db.query(models.Transaction).filter(
+        models.Transaction.user_id == student_id
+    ).count()
+
+
+    result = predict_reinforcement(
+        points=student.points,
+        rewards_this_month=rewards,
+        attendance_rate=95,
+        behavior_referrals=0
+    )
+
+
+    return {
+        "student": student.first_name,
+        **result
+    }
