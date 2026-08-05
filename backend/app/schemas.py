@@ -6,6 +6,9 @@ class UserCreate(BaseModel):
     last_name: str
     email: str
     role: str
+    attendance_rate: float = 100
+    behavior_referrals: int = 0
+    rewards_received: int = 0
 
 
 class UserResponse(BaseModel):

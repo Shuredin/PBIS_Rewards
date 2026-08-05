@@ -40,6 +40,7 @@ def predict_reinforcement(
 
 
     return {
-        "prediction": result,
-        "confidence": round(float(probability), 2)
+    "needs_reinforcement": bool(prediction == 1),
+    "prediction": result,
+    "confidence": round(float(probability), 2)
     }

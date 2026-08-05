@@ -44,7 +44,10 @@ def create_user(
         first_name=user.first_name,
         last_name=user.last_name,
         email=user.email,
-        role=user.role
+        role=user.role,
+        attendance_rate=user.attendance_rate,
+        behavior_referrals=user.behavior_referrals,
+        rewards_received=user.rewards_received
     )
 
     db.add(new_user)
@@ -70,6 +73,7 @@ def give_reward(
         return {"error": "Student not found"}
 
     student.points += reward.amount
+    student.rewards_received += 1
 
     transaction = models.Transaction(
         user_id=reward.student_id,
@@ -99,6 +103,47 @@ def get_students(db: Session = Depends(get_db)):
 
     return students
 
+
+@app.get("/students/recommendations")
+def get_recommendations(
+    db: Session = Depends(get_db)
+):
+    students = db.query(models.User).filter(
+        models.User.role == "student"
+    ).all()
+
+    recommendations = []
+
+    for student in students:
+
+        rewards = db.query(models.Transaction).filter(
+            models.Transaction.user_id == student.id
+        ).count()
+
+        result = predict_reinforcement(
+            points=student.points,
+            rewards_this_month=rewards,
+            attendance_rate=student.attendance_rate,
+            behavior_referrals=student.behavior_referrals
+        )
+
+        recommendations.append({
+            "id": student.id,
+            "name": f"{student.first_name} {student.last_name}",
+            "points": student.points,
+            "attendance_rate": student.attendance_rate,
+            "behavior_referrals": student.behavior_referrals,
+            "prediction": result
+        })
+
+        recommendations.sort(
+        key=lambda x: x["prediction"]["needs_reinforcement"],
+        reverse=True
+    )
+
+    return recommendations
+
+
 @app.get("/students/{student_id}")
 def get_student(
     student_id: int,
@@ -111,8 +156,14 @@ def get_student(
     if not student:
         return {"error": "Student not found"}
 
-    return student
+    transactions = db.query(models.Transaction).filter(
+        models.Transaction.user_id == student_id
+    ).all()
 
+    return {
+        "student": student,
+        "transactions": transactions
+    }
 
 @app.get("/students/{student_id}/reinforcement")
 def check_reinforcement(
@@ -136,9 +187,9 @@ def check_reinforcement(
 
     result = predict_reinforcement(
         points=student.points,
-        rewards_this_month=rewards,
-        attendance_rate=95,
-        behavior_referrals=0
+        rewards_this_month=student.rewards_received,
+        attendance_rate=student.attendance_rate,
+        behavior_referrals=student.behavior_referrals
     )
 
 

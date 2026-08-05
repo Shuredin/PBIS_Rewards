@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Float
 from .database import Base
 
 
@@ -12,6 +12,9 @@ class User(Base):
     email = Column(String, unique=True)
     role = Column(String)
     points = Column(Integer, default=0)
+    attendance_rate = Column(Float, default=100)
+    behavior_referrals = Column(Integer, default=0)
+    rewards_received = Column(Integer, default=0)
 
 
 class Transaction(Base):
