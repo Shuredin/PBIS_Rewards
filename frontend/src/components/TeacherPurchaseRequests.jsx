@@ -6,6 +6,10 @@ function TeacherPurchaseRequests() {
 
   const [requests, setRequests] = useState([]);
 
+  const [sortColumn, setSortColumn] = useState("requested_date");
+
+  const [sortDirection, setSortDirection] = useState("desc");
+
 
 
   async function loadRequests() {
@@ -61,7 +65,116 @@ function TeacherPurchaseRequests() {
 
   }
 
+function handleSort(column) {
 
+  if (sortColumn === column) {
+
+    setSortDirection(
+      sortDirection === "asc"
+        ? "desc"
+        : "asc"
+    );
+
+  } else {
+
+    setSortColumn(column);
+
+    setSortDirection("asc");
+
+  }
+
+}
+
+
+
+const sortedRequests = [...requests].sort((a, b) => {
+
+
+  let valueA;
+  let valueB;
+
+
+  switch(sortColumn) {
+
+
+    case "student":
+
+      valueA = `${a.student.last_name} ${a.student.first_name}`;
+
+      valueB = `${b.student.last_name} ${b.student.first_name}`;
+
+      break;
+
+
+
+    case "reward":
+
+      valueA = a.reward_item.name;
+
+      valueB = b.reward_item.name;
+
+      break;
+
+
+
+    case "cost":
+
+      valueA = a.reward_item.cost;
+
+      valueB = b.reward_item.cost;
+
+      break;
+
+
+
+    case "requested_date":
+
+      valueA = new Date(a.requested_date);
+
+      valueB = new Date(b.requested_date);
+
+      break;
+
+
+
+    case "status":
+
+      valueA = a.status;
+
+      valueB = b.status;
+
+      break;
+
+
+
+    default:
+
+      return 0;
+
+  }
+
+
+
+  if (typeof valueA === "string") {
+
+    return sortDirection === "asc"
+
+      ? valueA.localeCompare(valueB)
+
+      : valueB.localeCompare(valueA);
+
+  }
+
+
+
+  return sortDirection === "asc"
+
+    ? valueA - valueB
+
+    : valueB - valueA;
+
+
+});
 
 
   return (
@@ -92,33 +205,28 @@ function TeacherPurchaseRequests() {
 
               <tr>
 
-                <th>
+                <th onClick={() => handleSort("student")}>
                   Student
                 </th>
 
 
-                <th>
+                <th onClick={() => handleSort("reward")}>
                   Reward
                 </th>
 
 
-                <th>
+                <th onClick={() => handleSort("cost")}>
                   Cost
                 </th>
 
 
-                <th>
+                <th onClick={() => handleSort("requested_date")}>
                   Date Requested
                 </th>
 
 
-                <th>
+                <th onClick={() => handleSort("status")}>
                   Status
-                </th>
-
-
-                <th>
-                  Actions
                 </th>
 
 
@@ -132,7 +240,7 @@ function TeacherPurchaseRequests() {
 
 
               {
-                requests.map((request) => (
+                sortedRequests.map((request) => (
 
 
                   <tr key={request.id}>
