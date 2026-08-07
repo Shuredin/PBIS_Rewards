@@ -27,3 +27,45 @@ class RewardCreate(BaseModel):
     student_id: int
     amount: int
     reason: str
+
+
+from typing import Optional
+
+
+class ClassCreate(BaseModel):
+    name: str
+    teacher_id: int
+
+
+class ClassStudentCreate(BaseModel):
+    student_id: int
+
+
+class RewardItemCreate(BaseModel):
+
+    name: str
+
+    description: str
+
+    cost: int
+
+
+class PurchaseRequestCreate(BaseModel):
+
+    student_id: int
+
+    reward_item_id: int
+
+
+class PurchaseRequestResponse(BaseModel):
+
+    id: int
+
+    student_id: int
+
+    reward_item_id: int
+
+    status: str
+
+    class Config:
+        from_attributes = True

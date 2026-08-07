@@ -1,107 +1,41 @@
-import { useState, useEffect } from "react";
-import StudentDashboard from "./components/StudentDashboard";
-import ReinforcementPrediction from "./components/ReinforcementPrediction";
-import ReinforcementDashboard from "./components/ReinforcementDashboard";
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from "react-router-dom";
+
+import TeacherPortal from "./pages/TeacherPortal";
+import StudentPortal from "./pages/StudentPortal";
+import Login from "./pages/Login";
+
 
 function App() {
-  const [studentId, setStudentId] = useState("");
-  const [points, setPoints] = useState("");
-  const [reason, setReason] = useState("");
-  const [message, setMessage] = useState("");
-  const [students, setStudents] = useState([]);
-
-  useEffect(() => {
-  fetch("http://127.0.0.1:8000/students")
-    .then((response) => response.json())
-    .then((data) => setStudents(data));
-}, []);
-
-  async function giveReward() {
-    const response = await fetch("http://127.0.0.1:8000/reward", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        student_id: Number(studentId),
-        amount: Number(points),
-        reason: reason,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setMessage(
-        `${data.student} received ${data.new_points} total points`
-      );
-    } else {
-      setMessage("Error giving reward");
-    }
-  }
 
   return (
-  <div>
-    <h1>PBIS Rewards</h1>
+    <BrowserRouter>
 
-    <h2>Teacher Dashboard</h2>
+      <Routes>
 
-    <p>Give students positive reinforcement points.</p>
-
-    <div>
-      <label>
-        Student ID:
-        <select
-          value={studentId}
-          onChange={(e) => setStudentId(e.target.value)}
-        >
-          <option value="">Select Student</option>
-
-          {students.map((student) => (
-            <option key={student.id} value={student.id}>
-              {student.first_name} {student.last_name}
-            </option>
-          ))}
-        </select>
-      </label>
-    </div>
-
-    <div>
-      <label>
-        Points:
-        <input
-          type="number"
-          value={points}
-          onChange={(e) => setPoints(e.target.value)}
+        <Route
+          path="/"
+          element={<Login />}
         />
-      </label>
-    </div>
 
-    <div>
-      <label>
-        Reason:
-        <input
-          type="text"
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
+        <Route
+          path="/teacher"
+          element={<TeacherPortal />}
         />
-      </label>
-    </div>
 
-    <button onClick={giveReward}>
-      Give Reward
-    </button>
+        <Route
+          path="/student"
+          element={<StudentPortal />}
+        />
 
-    <p>{message}</p>
+      </Routes>
 
-    <StudentDashboard studentId={studentId} />
-
-    <ReinforcementPrediction studentId={studentId} />
-
-    <ReinforcementDashboard />
-
-  </div>
-);
+    </BrowserRouter>
+  );
 }
+
 
 export default App;
