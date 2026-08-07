@@ -44,28 +44,38 @@ class ClassStudentCreate(BaseModel):
 class RewardItemCreate(BaseModel):
 
     name: str
-
     description: str
-
     cost: int
+    store_id: int
 
 
 class PurchaseRequestCreate(BaseModel):
 
     student_id: int
-
     reward_item_id: int
 
 
 class PurchaseRequestResponse(BaseModel):
 
     id: int
-
     student_id: int
-
     reward_item_id: int
-
     status: str
 
     class Config:
+        from_attributes = True
+
+
+class StoreBase(BaseModel):
+
+    name: str
+    description: str | None = None
+
+
+class Store(StoreBase):
+
+    id: int
+    active: bool
+    class Config:
+
         from_attributes = True

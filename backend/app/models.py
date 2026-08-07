@@ -96,6 +96,16 @@ class RewardItem(Base):
         default=True
     )
 
+    store_id = Column(
+        Integer,
+        ForeignKey("stores.id")
+    )
+
+    store = relationship(
+        "Store",
+        back_populates="reward_items"
+    )
+
 
 class PurchaseRequest(Base):
 
@@ -142,4 +152,40 @@ class PurchaseRequest(Base):
 
     reward_item = relationship(
         "RewardItem"
+    )
+
+
+class Store(Base):
+
+    __tablename__ = "stores"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    name = Column(
+        String,
+        nullable=False
+    )
+
+    description = Column(
+        String
+    )
+
+    active = Column(
+        Boolean,
+        default=True
+    )
+
+    teacher_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=True
+    )
+
+    reward_items = relationship(
+        "RewardItem",
+        back_populates="store"
     )

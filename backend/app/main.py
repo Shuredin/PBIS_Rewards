@@ -125,16 +125,13 @@ def get_class_students(
         models.ClassStudent.class_id == class_id
     ).all()
 
-
     students = []
-
 
     for class_student in class_students:
 
         student = db.query(models.User).filter(
             models.User.id == class_student.student_id
         ).first()
-
 
         if student:
 
@@ -143,11 +140,9 @@ def get_class_students(
                 models.Transaction.created_at >= datetime.utcnow() - timedelta(days=7)
             ).all()
 
-
             weekly_points = sum(
                 reward.amount for reward in rewards_this_week
             )
-
 
             prediction = predict_reinforcement(
                 points=student.points,
@@ -156,34 +151,22 @@ def get_class_students(
                 behavior_referrals=student.behavior_referrals
             )
 
-
             students.append({
 
                 "id": student.id,
-
                 "first_name": student.first_name,
-
                 "last_name": student.last_name,
-
                 "points": student.points,
-
                 "weekly_points": weekly_points,
-
                 "attendance_rate": student.attendance_rate,
-
                 "behavior_referrals": student.behavior_referrals,
-
                 "needs_reinforcement":
                     prediction["prediction"] == "Needs Reinforcement",
-
                 "prediction":
                     prediction["prediction"],
-
                 "confidence":
                     prediction["confidence"]
-
             })
-
 
     return students
 
@@ -197,40 +180,29 @@ def get_all_school_students(
         models.User.role == "student"
     ).all()
 
-
     student_list = []
 
-
     for student in students:
-
 
         weekly_transactions = db.query(
             models.Transaction
         ).filter(
 
             models.Transaction.user_id == student.id,
-
             models.Transaction.created_at >= datetime.utcnow() - timedelta(days=7)
 
         ).all()
-
-
 
         weekly_points = sum(
             transaction.amount
             for transaction in weekly_transactions
         )
 
-
-
         prediction = predict_reinforcement(
 
             points=student.points,
-
             rewards_this_month=student.rewards_received,
-
             attendance_rate=student.attendance_rate,
-
             behavior_referrals=student.behavior_referrals
 
         )
@@ -240,25 +212,16 @@ def get_all_school_students(
         student_list.append({
 
             "id": student.id,
-
             "first_name": student.first_name,
-
             "last_name": student.last_name,
-
             "points": student.points,
-
             "weekly_points": weekly_points,
-
             "attendance_rate": student.attendance_rate,
-
             "behavior_referrals": student.behavior_referrals,
-
             "needs_reinforcement":
                 prediction["prediction"] == "Needs Reinforcement",
-
             "prediction":
                 prediction["prediction"],
-
             "confidence":
                 prediction["confidence"]
 
@@ -351,7 +314,6 @@ def get_recommendations(
 
     return recommendations
 
-
 @app.get("/students/{student_id}")
 def get_student(
     student_id: int,
@@ -418,9 +380,24 @@ def get_store_items(
     db: Session = Depends(get_db)
 ):
 
+    teacher_id = 3
+
+    store = db.query(
+        models.Store
+    ).filter(
+        models.Store.teacher_id == teacher_id,
+        models.Store.active == True
+    ).first()
+
+    if not store:
+        return {
+            "error": "No store assigned to this teacher"
+        }
+
     return db.query(
         models.RewardItem
     ).filter(
+        models.RewardItem.store_id == store.id,
         models.RewardItem.active == True
     ).all()
 
@@ -431,25 +408,38 @@ def create_store_item(
     db: Session = Depends(get_db)
 ):
 
+    teacher_id = 3
+
+    store = db.query(
+        models.Store
+    ).filter(
+        models.Store.teacher_id == teacher_id,
+        models.Store.active == True
+    ).first()
+
+    if not store:
+        return {
+            "error": "No store assigned to this teacher"
+        }
+
     new_item = models.RewardItem(
-
-        teacher_id=1,
-
         name=item.name,
-
         description=item.description,
-
-        cost=item.cost
-
+        cost=item.cost,
+        teacher_id=teacher_id,
+        store_id=store.id
     )
+
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
+
+    return new_item
 
 
     db.add(new_item)
-
     db.commit()
-
     db.refresh(new_item)
-
 
     return new_item
 
@@ -461,24 +451,40 @@ def update_store_item(
     db: Session = Depends(get_db)
 ):
 
+    teacher_id = 3
+
+    store = db.query(
+        models.Store
+    ).filter(
+        models.Store.teacher_id == teacher_id,
+        models.Store.active == True
+    ).first()
+
+    if not store:
+        return {
+            "error": "No store assigned to this teacher"
+        }
+
     store_item = db.query(
         models.RewardItem
     ).filter(
-        models.RewardItem.id == item_id
+        models.RewardItem.id == item_id,
+        models.RewardItem.store_id == store.id
     ).first()
 
+    if not store_item:
+        return {
+            "error": "Reward item not found in your store"
+        }
 
     store_item.name = item.name
     store_item.description = item.description
     store_item.cost = item.cost
 
-
     db.commit()
-
     db.refresh(store_item)
 
     return store_item
-
 
 @app.delete("/storefront/items/{item_id}")
 def delete_store_item(
@@ -486,18 +492,35 @@ def delete_store_item(
     db: Session = Depends(get_db)
 ):
 
+    teacher_id = 3
+
+    store = db.query(
+        models.Store
+    ).filter(
+        models.Store.teacher_id == teacher_id,
+        models.Store.active == True
+    ).first()
+
+    if not store:
+        return {
+            "error": "No store assigned to this teacher"
+        }
+
     store_item = db.query(
         models.RewardItem
     ).filter(
-        models.RewardItem.id == item_id
+        models.RewardItem.id == item_id,
+        models.RewardItem.store_id == store.id
     ).first()
 
+    if not store_item:
+        return {
+            "error": "Reward item not found in your store"
+        }
 
     store_item.active = False
 
-
     db.commit()
-
 
     return {
         "message": "Item removed"
@@ -511,20 +534,13 @@ def create_purchase_request(
 ):
 
     purchase_request = models.PurchaseRequest(
-
         student_id=request.student_id,
-
         reward_item_id=request.reward_item_id
-
     )
 
-
     db.add(purchase_request)
-
     db.commit()
-
     db.refresh(purchase_request)
-
 
     return purchase_request
 
@@ -561,16 +577,12 @@ def update_purchase_request(
         .first()
     )
 
-
     if not purchase_request:
         return {
             "error": "Request not found"
         }
 
-
-
     if status == "Approved":
-
 
         student = (
             db.query(models.User)
@@ -580,7 +592,6 @@ def update_purchase_request(
             .first()
         )
 
-
         reward_item = (
             db.query(models.RewardItem)
             .filter(
@@ -589,18 +600,11 @@ def update_purchase_request(
             .first()
         )
 
-
         if not student or not reward_item:
 
             return {
                 "error": "Student or reward not found"
             }
-
-
-
-        print("Student points:", student.points)
-        print("Reward cost:", reward_item.cost)
-
 
         if student.points < reward_item.cost:
 
@@ -608,18 +612,75 @@ def update_purchase_request(
                 "error": "Student does not have enough points"
             }
 
-
-
         student.points -= reward_item.cost
-
-
-
     purchase_request.status = status
+    db.commit()
+    db.refresh(purchase_request)
 
+    return purchase_request
+
+
+@app.get("/stores", response_model=list[schemas.Store])
+def get_stores(db: Session = Depends(get_db)):
+
+    return db.query(models.Store).filter(
+        models.Store.active == True
+    ).all()
+
+
+@app.get("/teacher/store")
+def get_teacher_store(
+    db: Session = Depends(get_db)
+):
+    teacher_id = 3
+
+    store = db.query(models.Store).filter(
+        models.Store.teacher_id == teacher_id,
+        models.Store.active == True
+    ).first()
+
+    if not store:
+        return {
+            "error": "No store assigned to this teacher"
+        }
+
+    return store
+
+
+@app.post("/stores", response_model=schemas.Store)
+def create_store(
+    store: schemas.StoreBase,
+    db: Session = Depends(get_db)
+):
+
+    new_store = models.Store(
+        name=store.name,
+        description=store.description
+    )
+
+    db.add(new_store)
+    db.commit()
+    db.refresh(new_store)
+
+    return new_store
+
+
+@app.put("/stores/{store_id}/delete")
+def delete_store(
+    store_id: int,
+    db: Session = Depends(get_db)
+):
+
+    store = db.query(models.Store).filter(
+        models.Store.id == store_id
+    ).first()
+
+    if not store:
+
+        return {"error": "Store not found"}
+
+    store.active = False
 
     db.commit()
 
-    db.refresh(purchase_request)
-
-
-    return purchase_request
+    return {"message": "Store deleted"}
