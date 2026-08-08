@@ -27,6 +27,7 @@ class RewardCreate(BaseModel):
     student_id: int
     amount: int
     reason: str
+    teacher_id: int
 
 
 from typing import Optional

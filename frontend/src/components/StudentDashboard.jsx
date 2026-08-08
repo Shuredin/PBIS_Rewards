@@ -27,13 +27,84 @@ function StudentDashboard({ studentId }) {
         {student.student.first_name} {student.student.last_name}
       </h2>
 
-      <h3>Reward History</h3>
+      <h3>Transaction History</h3>
 
-      {student.transactions.map((transaction) => (
-        <p key={transaction.id}>
-          +{transaction.amount} points - {transaction.reason}
-        </p>
-      ))}
+      {student.transactions.length === 0 ? (
+
+          <p>
+              No transactions yet.
+          </p>
+
+      ) : (
+
+          <table className="student-table">
+
+              <thead>
+
+                  <tr>
+
+                      <th>
+                          Date
+                      </th>
+
+                      <th>
+                          Transaction
+                      </th>
+
+                      <th>
+                          Points
+                      </th>
+
+                      <th>
+                          Awarded By / Store
+                      </th>
+
+                  </tr>
+
+              </thead>
+
+              <tbody>
+
+                  {student.transactions.map((transaction) => (
+
+                      <tr key={transaction.id}>
+
+                          <td>
+                              {new Date(
+                                  transaction.created_at
+                              ).toLocaleDateString()}
+                          </td>
+
+                          <td>
+                              {transaction.reason}
+                          </td>
+
+                          <td>
+                              {transaction.amount > 0
+                                  ? `+${transaction.amount}`
+                                  : transaction.amount}
+                          </td>
+
+                          <td>
+
+                              {transaction.awarded_by
+                                  ? transaction.awarded_by
+                                  : transaction.store
+                                      ? transaction.store
+                                      : "—"}
+
+                          </td>
+
+                      </tr>
+
+                  ))}
+
+              </tbody>
+
+          </table>
+
+      )}
+
     </div>
   );
 }

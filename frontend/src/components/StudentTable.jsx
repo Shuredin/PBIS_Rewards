@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 
-function StudentTable({ students, onSelect, refreshStudents }) {
+function StudentTable({ students, onSelect, refreshStudents, classId }) {
 
 
   async function giveReward(studentId, amount) {
@@ -34,6 +34,38 @@ function StudentTable({ students, onSelect, refreshStudents }) {
   }
 
 
+  async function removeStudent(studentId, studentName) {
+
+    const confirmed = window.confirm(
+        `Remove ${studentName} from this class?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    const response = await fetch(
+        `http://127.0.0.1:8000/classes/${classId}/students/${studentId}`,
+        {
+            method: "DELETE"
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+
+        alert(
+            data.error ||
+            "Unable to remove student."
+        );
+
+        return;
+    }
+
+    await refreshStudents();
+}
+
 
   const [sortColumn, setSortColumn] = useState("last_name");
 const [sortDirection, setSortDirection] = useState("asc");
@@ -41,21 +73,20 @@ const [sortDirection, setSortDirection] = useState("asc");
 
 function handleSort(column) {
 
-  if (sortColumn === column) {
+    if (sortColumn === column) {
 
-    setSortDirection(
-      sortDirection === "asc"
-        ? "desc"
-        : "asc"
-    );
+        setSortDirection((currentDirection) =>
+            currentDirection === "asc"
+                ? "desc"
+                : "asc"
+        );
 
-  } else {
+    } else {
 
-    setSortColumn(column);
-    setSortDirection("asc");
+        setSortColumn(column);
+        setSortDirection("asc");
 
-  }
-
+    }
 }
 
 
@@ -150,17 +181,13 @@ const sortedStudents = [...students].sort((a, b) => {
 
 function sortIndicator(column) {
 
-  if (sortColumn !== column) {
+    if (sortColumn !== column) {
+        return " ↕";
+    }
 
-    return "";
-
-  }
-
-
-  return sortDirection === "asc"
-    ? " ▲"
-    : " ▼";
-
+    return sortDirection === "asc"
+        ? " ↑"
+        : " ↓";
 }
 
   return (
@@ -203,6 +230,10 @@ function sortIndicator(column) {
 
       <th>
       Add Points
+      </th>
+
+      <th>
+      Actions
       </th>
 
 
@@ -267,41 +298,55 @@ function sortIndicator(column) {
               </td>
 
 
-              <td>
+              <td className="points-cell">
 
+                  <div className="points-buttons">
 
-                <button
+                      <button
+                          onClick={(event) => {
+                              event.stopPropagation();
+                              giveReward(student.id, 5);
+                          }}
+                      >
+                          +5
+                      </button>
 
-                  onClick={(event) => {
+                      <button
+                          onClick={(event) => {
+                              event.stopPropagation();
+                              giveReward(student.id, 10);
+                          }}
+                      >
+                          +10
+                      </button>
 
-                    event.stopPropagation();
-
-                    giveReward(student.id, 5);
-
-                  }}
-
-                >
-                  +5
-                </button>
-
-
-
-                <button
-
-                  onClick={(event) => {
-
-                    event.stopPropagation();
-
-                    giveReward(student.id, 10);
-
-                  }}
-
-                >
-                  +10
-                </button>
-
+                  </div>
 
               </td>
+
+
+              <td className="action-cell">
+                {
+                    classId !== "all" && (
+                        <div className="action-button-container">
+                            <button
+                                onClick={(event) => {
+
+                                    event.stopPropagation();
+
+                                    removeStudent(
+                                        student.id,
+                                        `${student.first_name} ${student.last_name}`
+                                    );
+
+                                }}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    )
+                }
+            </td>
 
 
             </tr>

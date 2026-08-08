@@ -1,25 +1,125 @@
-.teacher-dashboard {
-  padding: 20px;
+:root {
+    --primary-blue: #1557a6;
+    --dark-blue: #0d3b73;
+    --bright-blue: #1e6dcc;
+
+    --yellow: #f6c515;
+    --light-yellow: #fff7d6;
+
+    --background: #eef4fb;
+    --white: #ffffff;
+
+    --text-dark: #243447;
+    --text-muted: #667085;
+
+    --border: #c8d8eb;
+
+    --shadow: 0 4px 12px rgba(13, 59, 115, 0.10);
+    --shadow-hover: 0 8px 22px rgba(13, 59, 115, 0.18);
+}
+
+html,
+body,
+#root {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    background-color: var(--background);
+    color: var(--text-dark);
+    font-family: Arial, sans-serif;
 }
 
 
+.teacher-dashboard h1,
+.student-dashboard h1 {
+    color: white;
+    background-color: var(--primary-blue);
+    padding: 20px 25px;
+    margin: 0px 0px 20px 0px;
+    border-bottom: 6px solid var(--yellow);
+}
+
+.teacher-dashboard > p,
+.student-dashboard > p {
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
 .dashboard-cards {
-
-display:grid;
-grid-template-columns: repeat(4,1fr);
-gap:20px;
-
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 30px;
+    width: 100%;
+    margin: 30px auto;
 }
 
 
 .card {
+    width: 300px;
+    min-height: 160px;
+    box-sizing: border-box;
 
-border:1px solid #ccc;
-padding:20px;
-border-radius:10px;
+    background-color: var(--white);
 
+    border: 2px solid var(--primary-blue);
+    border-top: 6px solid var(--primary-blue);
+
+    border-radius: 14px;
+
+    padding: 25px;
+
+    cursor: pointer;
+
+    box-shadow: var(--shadow);
+
+    text-align: center;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease;
 }
 
+.card h3 {
+    color: var(--primary-blue);
+}
+
+.card p {
+    color: var(--text-muted);
+}
+
+.card:hover {
+    transform: translateY(-6px);
+
+    background-color: var(--light-yellow);
+
+    border-color: var(--yellow);
+
+    box-shadow: var(--shadow-hover);
+}
+
+.card.active-card {
+    background-color: var(--light-yellow);
+    border-color: var(--yellow);
+    border-top-color: var(--yellow);
+    box-shadow: var(--shadow-hover);
+}
+
+.card.active-card h3 {
+    color: var(--dark-blue);
+}
+
+.card:hover h3 {
+    color: var(--dark-blue);
+}
+
+.card:active {
+    transform: translateY(-2px);
+}
 
 table {
 
@@ -39,7 +139,7 @@ border-bottom:1px solid #ddd;
 
 .needs-reinforcement {
 
-background-color:#ffd6d6;
+background-color:#f6c515;
 
 }
 
@@ -66,61 +166,42 @@ background-color:#ffd6d6;
 
 }
 
-.card {
-  cursor: pointer;
-  transition: transform 0.2s;
+
+.student-table th {
+    background-color: var(--primary-blue);
+    color: white;
+
+    padding: 12px;
+
+    text-align: center;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.student-table th:hover {
+    background-color: var(--yellow);
+    color: var(--dark-blue);
+}
+
+.student-table th:active {
+    transform: scale(0.98);
 }
 
 
-.card:hover {
-  transform: scale(1.03);
+.student-table th:hover::after {
+    opacity: 1;
 }
 
 
-.student-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.student-table th,
 .student-table td {
   padding: 10px;
   border: 1px solid #ddd;
 }
-
-.needs-reinforcement {
-  background-color: #ffe5e5;
-}
-
-.needs-reinforcement:hover {
-  background-color: #ffd6d6;
-}
-
-.student-table {
-
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-
-}
-
-
-.student-table th {
-
-  background-color: #f2f2f2;
-  padding: 12px;
-  text-align: left;
-
-}
-
-
-.student-table td {
-
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-
-}
-
 
 .student-table tr:hover {
 
@@ -129,19 +210,19 @@ background-color:#ffd6d6;
 
 }
 
+.student-table tbody tr:hover {
+    background-color: var(--light-yellow);
+}
+
+.student-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
 
 .needs-reinforcement {
-
-  background-color: #ffe6e6;
-
+  background-color: #fec9ba;
 }
 
-
-.needs-reinforcement:hover {
-
-  background-color: #ffd1d1;
-
-}
 
 .student-profile {
 
@@ -203,32 +284,6 @@ background-color:#ffd6d6;
   opacity: 0.8;
 }
 
-.student-table button {
-
-  margin-right: 8px;
-  padding: 6px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-
-}
-
-
-.student-table button:hover {
-
-  opacity: .8;
-
-}
-
-.student-table tbody tr {
-  cursor: pointer;
-}
-
-.class-manager {
-
-  margin-top: 30px;
-
-}
-
 
 .class-list {
 
@@ -243,32 +298,86 @@ background-color:#ffd6d6;
 }
 
 
-.class-card {
+.store-card {
+    background-color: var(--white);
 
-  width: 220px;
+    border: 2px solid var(--primary-blue);
+    border-top: 6px solid var(--primary-blue);
 
-  padding: 20px;
+    border-radius: 14px;
 
-  border-radius: 8px;
+    padding: 20px;
 
-  border: 1px solid #ccc;
+    min-height: 150px;
 
-  cursor: pointer;
+    box-sizing: border-box;
 
+    cursor: pointer;
+
+    box-shadow: var(--shadow);
+
+    text-align: center;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease;
 }
 
+.store-card h3 {
+    color: var(--primary-blue);
+}
 
-.class-card:hover {
+.store-card:hover {
+    transform: translateY(-6px);
 
-  transform: scale(1.02);
+    background-color: var(--light-yellow);
 
+    border-color: var(--yellow);
+
+    box-shadow: var(--shadow-hover);
+}
+
+.store-card:hover h3 {
+    color: var(--dark-blue);
+}
+
+.store-card:active {
+    transform: translateY(-2px);
 }
 
 .teacher-classes {
 
   margin-top: 20px;
+  margin-bottom: 40px;
   text-align: center;
 
+}
+
+
+input:not([type="checkbox"]):not([type="radio"]) {
+    width: 280px;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 2px solid var(--primary-blue);
+    border-radius: 8px;
+    background-color: var(--white);
+    color: var(--text-dark);
+    outline: none;
+    box-sizing: border-box;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+input:not([type="checkbox"]):not([type="radio"])::placeholder {
+    color: var(--text-muted);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 3px rgba(246, 197, 21, 0.25);
 }
 
 
@@ -277,6 +386,7 @@ background-color:#ffd6d6;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 15px;
   margin-top: 20px;
 
@@ -291,18 +401,6 @@ background-color:#ffd6d6;
 
 }
 
-.student-table th {
-
-  cursor: pointer;
-
-}
-
-
-.student-table th:hover {
-
-  text-decoration: underline;
-
-}
 
 .expanded-panel {
   margin-top: 30px;
@@ -323,27 +421,130 @@ background-color:#ffd6d6;
 }
 
 
-.student-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+.store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
+    justify-content: center;
+    gap: 25px;
+    width: 100%;
+    margin: 30px auto;
 }
 
+.store-card {
+    background-color: var(--white);
 
-.student-table th,
-.student-table td {
+    border: 2px solid var(--primary-blue);
+    border-radius: 14px;
 
-  border: 1px solid #ddd;
+    padding: 20px;
 
-  padding: 10px;
+    min-height: 150px;
 
-  text-align: center;
+    box-sizing: border-box;
 
+    cursor: pointer;
+
+    box-shadow: var(--shadow);
+
+    text-align: center;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 }
 
+.store-card h3 {
+    color: var(--primary-blue);
+}
 
-.student-table th {
+.store-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--yellow);
+    box-shadow: var(--shadow-hover);
+}
 
-  cursor: default;
+.store-card:hover h3 {
+    color: var(--dark-blue);
+}
 
+.store-card:active {
+    transform: translateY(-1px);
+}
+
+button {
+    background-color: var(--primary-blue);
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 10px 18px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+button:hover {
+    background-color: var(--yellow);
+    color: var(--dark-blue);
+
+    box-shadow: 0 4px 10px rgba(13, 59, 115, 0.20);
+
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+.points-cell {
+    padding: 10px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.points-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.points-buttons button {
+    margin: 0 !important;
+}
+
+.student-table .action-cell {
+    text-align: center;
+    vertical-align: middle !important;
+    white-space: nowrap;
+}
+
+.student-table .action-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.student-table .action-button-container button {
+    margin: 0;
+}
+
+.add-students-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+    margin-bottom: 25px;
 }

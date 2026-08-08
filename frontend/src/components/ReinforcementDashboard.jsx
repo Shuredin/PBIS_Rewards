@@ -10,6 +10,7 @@ const giveReward = async (studentId) => {
       student_id: studentId,
       amount: 5,
       reason: "AI recommended positive reinforcement",
+      teacher_id: teacherId
     }),
   });
 
@@ -18,7 +19,8 @@ const giveReward = async (studentId) => {
     loadRecommendations();
 };
 
-function ReinforcementDashboard() {
+function ReinforcementDashboard({ teacherId }) {
+
   const [recommendations, setRecommendations] = useState([]);
 
   async function loadRecommendations() {

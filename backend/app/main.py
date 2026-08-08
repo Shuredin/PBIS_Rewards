@@ -103,6 +103,16 @@ def add_student_to_class(
     db: Session = Depends(get_db)
 ):
 
+    existing = db.query(models.ClassStudent).filter(
+        models.ClassStudent.class_id == class_id,
+        models.ClassStudent.student_id == student.student_id
+    ).first()
+
+    if existing:
+        return {
+            "error": "Student is already in this class"
+        }
+
     class_student = models.ClassStudent(
         class_id=class_id,
         student_id=student.student_id
@@ -113,6 +123,33 @@ def add_student_to_class(
     db.refresh(class_student)
 
     return class_student
+
+
+@app.delete("/classes/{class_id}/students/{student_id}")
+def remove_student_from_class(
+    class_id: int,
+    student_id: int,
+    db: Session = Depends(get_db)
+):
+
+    class_student = db.query(
+        models.ClassStudent
+    ).filter(
+        models.ClassStudent.class_id == class_id,
+        models.ClassStudent.student_id == student_id
+    ).first()
+
+    if not class_student:
+        return {
+            "error": "Student is not in this class"
+        }
+
+    db.delete(class_student)
+    db.commit()
+
+    return {
+        "message": "Student removed from class"
+    }
 
 
 @app.get("/classes/{class_id}/students")
@@ -169,6 +206,35 @@ def get_class_students(
             })
 
     return students
+
+
+@app.get("/classes/{class_id}/available-students")
+def get_available_students(
+    class_id: int,
+    db: Session = Depends(get_db)
+):
+
+    existing_student_ids = db.query(
+        models.ClassStudent.student_id
+    ).filter(
+        models.ClassStudent.class_id == class_id
+    ).all()
+
+    existing_student_ids = [
+        student_id[0]
+        for student_id in existing_student_ids
+    ]
+
+    students = db.query(models.User).filter(
+        models.User.role == "student"
+    )
+
+    if existing_student_ids:
+        students = students.filter(
+            ~models.User.id.in_(existing_student_ids)
+        )
+
+    return students.all()
 
 
 @app.get("/school/students")
@@ -236,20 +302,40 @@ def give_reward(
     reward: schemas.RewardCreate,
     db: Session = Depends(get_db)
 ):
-    student = db.query(models.User).filter(
-        models.User.id == reward.student_id
-    ).first()
+    student = (
+        db.query(models.User)
+        .filter(
+            models.User.id == reward.student_id
+        )
+        .first()
+    )
 
     if not student:
-        return {"error": "Student not found"}
+        return {
+            "error": "Student not found"
+        }
+
+    teacher = (
+        db.query(models.User)
+        .filter(
+            models.User.id == reward.teacher_id
+        )
+        .first()
+    )
+
+    if not teacher:
+        return {
+            "error": "Teacher not found"
+        }
 
     student.points += reward.amount
     student.rewards_received += 1
 
     transaction = models.Transaction(
-        user_id=reward.student_id,
+        user_id=student.id,
         amount=reward.amount,
-        reason=reward.reason
+        reason=reward.reason,
+        awarded_by=teacher.id
     )
 
     db.add(transaction)
@@ -261,6 +347,7 @@ def give_reward(
         "student": student.first_name,
         "new_points": student.points
     }
+
 
 @app.get("/transactions")
 def get_transactions(db: Session = Depends(get_db)):
@@ -328,11 +415,47 @@ def get_student(
 
     transactions = db.query(models.Transaction).filter(
         models.Transaction.user_id == student_id
+    ).order_by(
+        models.Transaction.created_at.desc()
     ).all()
+
+    transaction_history = []
+
+    for transaction in transactions:
+
+        awarded_by = None
+        store_name = None
+
+        if transaction.awarded_by:
+            teacher = db.query(models.User).filter(
+                models.User.id == transaction.awarded_by
+            ).first()
+
+            if teacher:
+                awarded_by = (
+                    f"{teacher.first_name} {teacher.last_name}"
+                )
+
+        if transaction.store_id:
+            store = db.query(models.Store).filter(
+                models.Store.id == transaction.store_id
+            ).first()
+
+            if store:
+                store_name = store.name
+
+        transaction_history.append({
+            "id": transaction.id,
+            "amount": transaction.amount,
+            "reason": transaction.reason,
+            "created_at": transaction.created_at,
+            "awarded_by": awarded_by,
+            "store": store_name
+        })
 
     return {
         "student": student,
-        "transactions": transactions
+        "transactions": transaction_history
     }
 
 @app.get("/students/{student_id}/reinforcement")
@@ -429,13 +552,6 @@ def create_store_item(
         teacher_id=teacher_id,
         store_id=store.id
     )
-
-    db.add(new_item)
-    db.commit()
-    db.refresh(new_item)
-
-    return new_item
-
 
     db.add(new_item)
     db.commit()
@@ -582,6 +698,16 @@ def update_purchase_request(
             "error": "Request not found"
         }
 
+    if status not in ["Approved", "Denied"]:
+        return {
+            "error": "Invalid status"
+        }
+
+    if purchase_request.status != "Pending":
+        return {
+            "error": "This request has already been processed"
+        }
+
     if status == "Approved":
 
         student = (
@@ -601,23 +727,37 @@ def update_purchase_request(
         )
 
         if not student or not reward_item:
-
             return {
                 "error": "Student or reward not found"
             }
 
         if student.points < reward_item.cost:
-
             return {
                 "error": "Student does not have enough points"
             }
 
         student.points -= reward_item.cost
+
+        transaction = models.Transaction(
+            user_id=student.id,
+            amount=-reward_item.cost,
+            reason=f"Purchased: {reward_item.name}",
+            store_id=reward_item.store_id
+        )
+
+        db.add(transaction)
+
     purchase_request.status = status
+
     db.commit()
+
     db.refresh(purchase_request)
 
-    return purchase_request
+    return {
+        "id": purchase_request.id,
+        "status": purchase_request.status,
+        "message": f"Purchase request {status.lower()}"
+    }
 
 
 @app.get("/stores", response_model=list[schemas.Store])
@@ -653,9 +793,22 @@ def create_store(
     db: Session = Depends(get_db)
 ):
 
+    teacher_id = 3
+
+    teacher = db.query(models.User).filter(
+        models.User.id == teacher_id,
+        models.User.role == "teacher"
+    ).first()
+
+    if not teacher:
+        return {
+            "error": "Teacher not found"
+        }
+
     new_store = models.Store(
         name=store.name,
-        description=store.description
+        description=store.description,
+        teacher_id=teacher_id
     )
 
     db.add(new_store)
@@ -684,3 +837,19 @@ def delete_store(
     db.commit()
 
     return {"message": "Store deleted"}
+
+
+@app.get("/stores/{store_id}/items")
+def get_store_items(
+    store_id: int,
+    db: Session = Depends(get_db)
+):
+
+    items = db.query(
+        models.RewardItem
+    ).filter(
+        models.RewardItem.store_id == store_id,
+        models.RewardItem.active == True
+    ).all()
+
+    return items

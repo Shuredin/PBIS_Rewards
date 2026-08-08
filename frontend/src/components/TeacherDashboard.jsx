@@ -5,41 +5,38 @@ import ClassStudentList from "./ClassStudentList";
 import StaffStudentProfile from "../pages/StaffStudentProfile";
 import TeacherStorefront from "./TeacherStorefront";
 import TeacherPurchaseRequests from "./TeacherPurchaseRequests";
+import ReinforcementDashboard from "./ReinforcementDashboard";
+import AddStudents from "./AddStudents";
 
 
 function TeacherDashboard() {
-
+    const teacherId = 3;
 
 const [selectedClass, setSelectedClass] = useState(null);
-
 const [selectedStudent, setSelectedStudent] = useState(null);
-
 const [activePanel, setActivePanel] = useState(null);
-
 const [studentSearch, setStudentSearch] = useState("");
+const [showAddStudents, setShowAddStudents] = useState(false);
 
 function togglePanel(panel) {
 
-  if (activePanel === panel) {
+    if (activePanel === panel) {
 
-    setActivePanel(null);
+        setActivePanel(null);
+        setSelectedClass(null);
+        setSelectedStudent(null);
+        setShowAddStudents(false);
 
-    setSelectedClass(null);
+    } else {
 
-    setSelectedStudent(null);
+        setActivePanel(panel);
+        setSelectedClass(null);
+        setSelectedStudent(null);
+        setShowAddStudents(false);
 
-  } else {
-
-    setActivePanel(panel);
-
-    setSelectedClass(null);
-
-    setSelectedStudent(null);
-
-  }
+    }
 
 }
-
 
   return (
 
@@ -61,7 +58,7 @@ function togglePanel(panel) {
 
 
         <div
-            className="card"
+            className={`card ${activePanel === "classes" ? "active-card" : ""}`}
             onClick={() => togglePanel("classes")}
         >
 
@@ -77,23 +74,23 @@ function togglePanel(panel) {
 
 
 
-        <div className="card"
+        <div className={`card ${activePanel === "rewards" ? "active-card" : ""}`}
         onClick={() => togglePanel("rewards")}
         >
 
           <h3>
-            Give Rewards
+            AI Insights
           </h3>
 
           <p>
-            Award students positive reinforcement points
+            See who needs extra support and award points
           </p>
 
         </div>
 
 
 
-        <div className="card"
+        <div className={`card ${activePanel === "storefront" ? "active-card" : ""}`}
         onClick={() => togglePanel("storefront")}
         >
 
@@ -110,7 +107,7 @@ function togglePanel(panel) {
 
 
         <div
-          className="card"
+          className={`card ${activePanel === "requests" ? "active-card" : ""}`}
           onClick={() => togglePanel("requests")}
         >
 
@@ -129,24 +126,87 @@ function togglePanel(panel) {
 
 
       {
-        selectedClass &&
+      activePanel === "classes" &&
 
-        <ClassStudentList
+      <TeacherClasses
 
-        classId={selectedClass}
+        teacherId={3}
 
-        search={studentSearch}
+        onSelectClass={setSelectedClass}
 
-        title={
-          selectedClass === "all"
-            ? "All School Students"
-            : "Class Students"
-        }
+        onSearchStudent={setStudentSearch}
 
-        onSelect={setSelectedStudent}
+      />
 
-        />
+      }
 
+
+      {
+          selectedClass && (
+
+              <>
+
+                  <ClassStudentList
+
+                      classId={selectedClass}
+
+                      search={studentSearch}
+
+                      title={
+                          selectedClass === "all"
+                              ? "All School Students"
+                              : "Class Students"
+                      }
+
+                      onSelect={setSelectedStudent}
+
+                  />
+
+
+                  {
+                      selectedClass !== "all" && (
+
+                          <div className="add-students-container">
+
+                              <button
+                                  onClick={() =>
+                                      setShowAddStudents(
+                                          !showAddStudents
+                                      )
+                                  }
+                              >
+                                  {
+                                      showAddStudents
+                                          ? "Close Add Students"
+                                          : "Add Students"
+                                  }
+                              </button>
+
+                          </div>
+
+                      )
+                  }
+
+
+                  {
+                      showAddStudents && (
+
+                          <AddStudents
+
+                              classId={selectedClass}
+
+                              onComplete={() => {
+                                  setShowAddStudents(false);
+                              }}
+
+                          />
+
+                      )
+                  }
+
+              </>
+
+          )
       }
 
 
@@ -160,38 +220,15 @@ function togglePanel(panel) {
 
       }
 
-      {
-      activePanel === "classes" &&
-
-      <TeacherClasses
-
-        teacherId={1}
-
-        onSelectClass={setSelectedClass}
-
-        onSearchStudent={setStudentSearch}
-
-      />
-
-      }
 
       {
       activePanel === "rewards" &&
 
-      <div className="expanded-panel">
-
-        <h2>
-          Give Rewards
-        </h2>
-
-        <p>
-          Award student points here.
-        </p>
-
-      </div>
+      <ReinforcementDashboard
+          teacherId={teacherId}
+      />
 
       }
-
 
 
       {

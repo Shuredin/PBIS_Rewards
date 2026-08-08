@@ -95,6 +95,8 @@ function ClassStudentList({ classId, search, onSelect, title }) {
 
             refreshStudents={loadStudents}
 
+            classId={classId}
+
           />
 
         )

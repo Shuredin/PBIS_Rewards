@@ -85,7 +85,15 @@ function handleSort(column) {
 
 }
 
+function getSortArrow(column) {
+    if (sortColumn !== column) {
+        return "↕";
+    }
 
+    return sortDirection === "asc"
+        ? "↑"
+        : "↓";
+}
 
 const sortedRequests = [...requests].sort((a, b) => {
 
@@ -205,34 +213,33 @@ const sortedRequests = [...requests].sort((a, b) => {
 
               <tr>
 
-                <th onClick={() => handleSort("student")}>
-                  Student
-                </th>
+                  <th onClick={() => handleSort("student")}>
+                      Student {getSortArrow("student")}
+                  </th>
 
+                  <th onClick={() => handleSort("reward")}>
+                      Reward {getSortArrow("reward")}
+                  </th>
 
-                <th onClick={() => handleSort("reward")}>
-                  Reward
-                </th>
+                  <th onClick={() => handleSort("cost")}>
+                      Cost {getSortArrow("cost")}
+                  </th>
 
+                  <th onClick={() => handleSort("requested_date")}>
+                      Date Requested {getSortArrow("requested_date")}
+                  </th>
 
-                <th onClick={() => handleSort("cost")}>
-                  Cost
-                </th>
+                  <th onClick={() => handleSort("status")}>
+                      Status {getSortArrow("status")}
+                  </th>
 
-
-                <th onClick={() => handleSort("requested_date")}>
-                  Date Requested
-                </th>
-
-
-                <th onClick={() => handleSort("status")}>
-                  Status
-                </th>
-
+                  <th>
+                      Actions
+                  </th>
 
               </tr>
 
-            </thead>
+          </thead>
 
 
 

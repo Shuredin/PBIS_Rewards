@@ -1,117 +1,230 @@
 import { useEffect, useState } from "react";
 
+function TeacherClasses({
+    teacherId,
+    onSelectClass,
+    onSearchStudent
+}) {
 
-function TeacherClasses({ teacherId, onSelectClass, onSearchStudent }) {
+    const [classes, setClasses] = useState([]);
 
+    const [search, setSearch] = useState("");
 
-  const [classes, setClasses] = useState([]);
+    const [showCreateClass, setShowCreateClass] =
+        useState(false);
 
-  const [search, setSearch] = useState("");
-
-
-
-  useEffect(() => {
-
-
-    fetch(
-      `http://127.0.0.1:8000/teachers/${teacherId}/classes`
-    )
-
-      .then((response) => response.json())
-
-      .then((data) => setClasses(data));
+    const [className, setClassName] =
+        useState("");
 
 
-  }, [teacherId]);
+    async function loadClasses() {
+
+        const response = await fetch(
+            `http://127.0.0.1:8000/teachers/${teacherId}/classes`
+        );
+
+        const data = await response.json();
+
+        setClasses(data);
+    }
 
 
+    useEffect(() => {
 
-  function handleSearch(event) {
+        loadClasses();
 
-    const value = event.target.value;
-
-    setSearch(value);
-
-
-    onSearchStudent(value);
-
-  }
+    }, [teacherId]);
 
 
+    function handleSearch(event) {
 
-  return (
+        const value = event.target.value;
 
-    <div className="teacher-classes">
+        setSearch(value);
 
-
-      <h2>
-        My Classes
-      </h2>
-
+        onSearchStudent(value);
+    }
 
 
-      <input
+    async function createClass() {
 
-        type="text"
+        if (!className.trim()) {
 
-        placeholder="Search student name..."
+            alert("Enter a class name.");
 
-        value={search}
-
-        onChange={handleSearch}
-
-      />
-
-
-
-      <div className="class-buttons">
-
-
-        <button
-
-          onClick={() =>
-            onSelectClass("all")
-          }
-
-        >
-
-          All School
-
-        </button>
-
-
-
-        {
-          classes.map((classGroup) => (
-
-
-            <button
-
-              key={classGroup.id}
-
-              onClick={() =>
-                onSelectClass(classGroup.id)
-              }
-
-            >
-
-              {classGroup.name}
-
-            </button>
-
-
-          ))
+            return;
         }
 
 
-      </div>
+        const response = await fetch(
+            "http://127.0.0.1:8000/classes",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    name: className,
+
+                    teacher_id: teacherId
+
+                })
+            }
+        );
 
 
-    </div>
+        const data = await response.json();
 
-  );
 
+        if (!response.ok || data.error) {
+
+            alert(
+                data.error ||
+                "Unable to create class."
+            );
+
+            return;
+        }
+
+
+        setClassName("");
+
+        setShowCreateClass(false);
+
+        await loadClasses();
+
+
+        alert("Class created.");
+    }
+
+
+    return (
+
+        <div className="teacher-classes">
+
+
+            <h2>
+                My Classes
+            </h2>
+
+
+            <input
+
+                type="text"
+
+                placeholder="Search student name..."
+
+                value={search}
+
+                onChange={handleSearch}
+
+            />
+
+
+            <div className="class-buttons">
+
+
+                <button
+
+                    onClick={() =>
+                        onSelectClass("all")
+                    }
+
+                >
+                    All School
+                </button>
+
+
+                {
+                    classes.map((classGroup) => (
+
+                        <button
+
+                            key={classGroup.id}
+
+                            onClick={() =>
+                                onSelectClass(
+                                    classGroup.id
+                                )
+                            }
+
+                        >
+
+                            {classGroup.name}
+
+                        </button>
+
+                    ))
+                }
+
+
+                <button
+
+                    onClick={() =>
+                        setShowCreateClass(
+                            !showCreateClass
+                        )
+                    }
+
+                >
+
+                    {
+                        showCreateClass
+                            ? "Close"
+                            : "+ Create Class"
+                    }
+
+                </button>
+
+
+            </div>
+
+
+            {
+                showCreateClass && (
+
+                    <div className="expanded-panel">
+
+                        <h3>
+                            Create New Class
+                        </h3>
+
+
+                        <input
+
+                            type="text"
+
+                            placeholder="Class name"
+
+                            value={className}
+
+                            onChange={(event) =>
+                                setClassName(
+                                    event.target.value
+                                )
+                            }
+
+                        />
+
+
+                        <button
+                            onClick={createClass}
+                        >
+                            Create Class
+                        </button>
+
+                    </div>
+
+                )
+            }
+
+
+        </div>
+
+    );
 }
-
 
 export default TeacherClasses;

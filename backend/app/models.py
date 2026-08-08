@@ -27,6 +27,8 @@ class Transaction(Base):
     amount = Column(Integer)
     reason = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
+    awarded_by = Column(Integer, nullable=True)
+    store_id = Column(Integer, nullable=True)
 
 class Class(Base):
     __tablename__ = "classes"
