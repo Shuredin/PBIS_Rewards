@@ -7,6 +7,7 @@ import {
 import TeacherPortal from "./pages/TeacherPortal";
 import StudentPortal from "./pages/StudentPortal";
 import Login from "./pages/Login";
+import Visualizations from "./pages/Visualizations";
 
 
 function App() {
@@ -29,6 +30,11 @@ function App() {
         <Route
           path="/student"
           element={<StudentPortal />}
+        />
+
+        <Route 
+          path="/visualizations" 
+          element={<Visualizations />} 
         />
 
       </Routes>

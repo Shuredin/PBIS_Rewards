@@ -30,6 +30,13 @@ function Login() {
 
       </div>
 
+      <button
+          type="button"
+          onClick={() => navigate("/visualizations")}
+      >
+          Visualizations
+      </button>
+
     </div>
   );
 }

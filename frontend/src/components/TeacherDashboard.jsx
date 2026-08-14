@@ -18,7 +18,7 @@ const [selectedStudent, setSelectedStudent] = useState(null);
 const [activePanel, setActivePanel] = useState(null);
 const [studentSearch, setStudentSearch] = useState("");
 const [showAddStudents, setShowAddStudents] = useState(false);
-const navigate = useNavigate();
+
 
 function togglePanel(panel) {
 
