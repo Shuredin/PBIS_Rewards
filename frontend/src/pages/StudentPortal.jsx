@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import StudentStores from "../components/StudentStores";
 import StudentTransactionHistory from "../components/StudentTransactionHistory";
@@ -7,6 +8,7 @@ import StudentTransactionHistory from "../components/StudentTransactionHistory";
 function StudentPortal() {
 
     const studentId = 1;
+    const navigate = useNavigate();
 
     const [activePanel, setActivePanel] = useState(null);
 
@@ -30,8 +32,19 @@ function StudentPortal() {
 
         <div className="student-dashboard">
 
-            <h1>
-                Student Portal
+            <h1 className="dashboard-header">
+
+                <span>
+                    Student Portal
+                </span>
+
+                <button
+                    className="back-button"
+                    onClick={() => navigate("/")}
+                >
+                    ← Back to Login
+                </button>
+
             </h1>
 
 

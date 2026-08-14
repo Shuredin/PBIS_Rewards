@@ -7,16 +7,18 @@ import TeacherStorefront from "./TeacherStorefront";
 import TeacherPurchaseRequests from "./TeacherPurchaseRequests";
 import ReinforcementDashboard from "./ReinforcementDashboard";
 import AddStudents from "./AddStudents";
-
+import { useNavigate } from "react-router-dom";
 
 function TeacherDashboard() {
     const teacherId = 3;
+    const navigate = useNavigate();
 
 const [selectedClass, setSelectedClass] = useState(null);
 const [selectedStudent, setSelectedStudent] = useState(null);
 const [activePanel, setActivePanel] = useState(null);
 const [studentSearch, setStudentSearch] = useState("");
 const [showAddStudents, setShowAddStudents] = useState(false);
+const navigate = useNavigate();
 
 function togglePanel(panel) {
 
@@ -43,9 +45,16 @@ function togglePanel(panel) {
     <div className="teacher-dashboard">
 
 
-      <h1>
-        Teacher Dashboard
-      </h1>
+<h1 className="dashboard-header">
+    <span>Teacher Dashboard</span>
+
+    <button
+        className="back-button"
+        onClick={() => navigate("/")}
+    >
+        ← Back to Login
+    </button>
+</h1>
 
 
       <p>
