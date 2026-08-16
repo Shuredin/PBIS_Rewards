@@ -158,7 +158,7 @@ function togglePanel(panel) {
                   <ClassStudentList
 
                       classId={selectedClass}
-
+                      teacherId={teacherId}
                       search={studentSearch}
 
                       title={

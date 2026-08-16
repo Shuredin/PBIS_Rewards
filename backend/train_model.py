@@ -17,8 +17,7 @@ data = pd.read_csv("training_data.csv")
 
 X = data[
     [
-        "points",
-        "rewards_this_month",
+        "rewards_this_week",
         "attendance_rate",
         "behavior_referrals"
     ]
@@ -83,4 +82,4 @@ joblib.dump(model, "reinforcement_model.pkl")
 
 
 print()
-print("Model trained and saved successfully.")
+print("successfully trained and saved")

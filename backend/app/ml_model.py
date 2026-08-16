@@ -6,22 +6,19 @@ model = joblib.load("reinforcement_model.pkl")
 
 
 def predict_reinforcement(
-    points,
-    rewards_this_month,
+    rewards_this_week,
     attendance_rate,
     behavior_referrals
 ):
 
     data = pd.DataFrame(
         [[
-            points,
-            rewards_this_month,
+            rewards_this_week,
             attendance_rate,
             behavior_referrals
         ]],
         columns=[
-            "points",
-            "rewards_this_month",
+            "rewards_this_week",
             "attendance_rate",
             "behavior_referrals"
         ]

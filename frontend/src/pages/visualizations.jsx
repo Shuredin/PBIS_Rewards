@@ -24,11 +24,11 @@ function Visualizations() {
 
             <div className="visualization-card">
 
-                <h2>Average Monthly Rewards</h2>
+                <h2>Average Weekly Rewards</h2>
 
                 <img
-                    src="/visualizations/average_monthly_rewards.png"
-                    alt="Average monthly rewards by reinforcement need"
+                    src="/visualizations/average_weekly_rewards.png"
+                    alt="Average weekly rewards by reinforcement need"
                 />
 
             </div>

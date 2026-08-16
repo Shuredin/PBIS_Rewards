@@ -12,23 +12,23 @@ data["needs_reinforcement_label"] = data["needs_reinforcement"].map({
 })
 
 
-monthly_rewards = data.groupby(
+weekly_rewards = data.groupby(
     "needs_reinforcement_label"
-)["rewards_this_month"].mean()
+)["rewards_this_week"].mean()
 
 plt.figure(figsize=(8, 5))
 
-monthly_rewards.plot(kind="bar")
+weekly_rewards.plot(kind="bar")
 
-plt.title("Average Rewards Earned This Month")
+plt.title("Average Rewards Earned This Week")
 plt.xlabel("Needs Reinforcement")
-plt.ylabel("Average Rewards This Month")
+plt.ylabel("Average Rewards This Week")
 plt.xticks(rotation=0)
 
 plt.tight_layout()
 
 plt.savefig(
-    os.path.join(output_dir, "average_monthly_rewards.png")
+    os.path.join(output_dir, "average_weekly_rewards.png")
 )
 
 plt.close()

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import StudentTable from "./StudentTable";
 
 
-function ClassStudentList({ classId, search, onSelect, title }) {
+function ClassStudentList({ classId, teacherId, search, onSelect, title }) {
 
 
   const [students, setStudents] = useState([]);
@@ -96,6 +96,8 @@ function ClassStudentList({ classId, search, onSelect, title }) {
             refreshStudents={loadStudents}
 
             classId={classId}
+
+            teacherId={teacherId}
 
           />
 

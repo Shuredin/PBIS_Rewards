@@ -1,7 +1,13 @@
 import { useState } from "react";
 
 
-function StudentTable({ students, onSelect, refreshStudents, classId }) {
+function StudentTable({
+    students,
+    onSelect,
+    refreshStudents,
+    classId,
+    teacherId
+}) {
 
 
   async function giveReward(studentId, amount) {
@@ -18,7 +24,8 @@ function StudentTable({ students, onSelect, refreshStudents, classId }) {
         body: JSON.stringify({
           student_id: studentId,
           amount: amount,
-          reason: "Classroom Positive Reinforcement"
+          reason: "Classroom Positive Reinforcement",
+          teacher_id: teacherId
         }),
 
       }

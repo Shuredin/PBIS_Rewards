@@ -36,7 +36,7 @@ def get_db():
 @app.get("/")
 def home():
     return {
-        "message": "PBIS Rewards Backend is running!"
+        "message": "system is running"
     }
 
 
@@ -182,8 +182,7 @@ def get_class_students(
             )
 
             prediction = predict_reinforcement(
-                points=student.points,
-                rewards_this_month=student.rewards_received,
+                rewards_this_week=student.rewards_received,
                 attendance_rate=student.attendance_rate,
                 behavior_referrals=student.behavior_referrals
             )
@@ -266,8 +265,7 @@ def get_all_school_students(
 
         prediction = predict_reinforcement(
 
-            points=student.points,
-            rewards_this_month=student.rewards_received,
+            rewards_this_week=weekly_points,
             attendance_rate=student.attendance_rate,
             behavior_referrals=student.behavior_referrals
 
@@ -379,8 +377,7 @@ def get_recommendations(
         ).count()
 
         result = predict_reinforcement(
-            points=student.points,
-            rewards_this_month=rewards,
+            rewards_this_week=rewards,
             attendance_rate=student.attendance_rate,
             behavior_referrals=student.behavior_referrals
         )
@@ -484,8 +481,7 @@ def check_reinforcement(
         weekly_points += transaction.amount
 
     result = predict_reinforcement(
-        points=student.points,
-        rewards_this_month=student.rewards_received,
+        rewards_this_week=weekly_points,
         attendance_rate=student.attendance_rate,
         behavior_referrals=student.behavior_referrals
     )
