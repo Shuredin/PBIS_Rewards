@@ -7,7 +7,7 @@ import {
 import TeacherPortal from "./pages/TeacherPortal";
 import StudentPortal from "./pages/StudentPortal";
 import Login from "./pages/Login";
-import Visualizations from "./pages/Visualizations";
+import Visualizations from "./pages/visualizations";
 
 
 function App() {
