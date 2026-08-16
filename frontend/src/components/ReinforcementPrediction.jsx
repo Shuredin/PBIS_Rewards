@@ -10,7 +10,7 @@ function ReinforcementPrediction({ studentId }) {
     }
 
     fetch(
-      `http://127.0.0.1:8000/students/${studentId}/reinforcement`
+      `${import.meta.env.VITE_API_URL}/students/${studentId}/reinforcement`
     )
       .then((response) => response.json())
       .then((data) => setPrediction(data));

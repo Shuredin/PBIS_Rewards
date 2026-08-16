@@ -11,7 +11,7 @@ function AddStudents({ classId, onComplete }) {
         setLoading(true);
 
         const response = await fetch(
-            `http://127.0.0.1:8000/classes/${classId}/available-students`
+            `${import.meta.env.VITE_API_URL}/classes/${classId}/available-students`
         );
 
         const data = await response.json();
@@ -62,7 +62,7 @@ function AddStudents({ classId, onComplete }) {
         for (const studentId of selectedStudents) {
 
             const response = await fetch(
-                `http://127.0.0.1:8000/classes/${classId}/students`,
+                `${import.meta.env.VITE_API_URL}/classes/${classId}/students`,
                 {
                     method: "POST",
 

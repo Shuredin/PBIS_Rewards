@@ -6,7 +6,7 @@ function AIInsights({ studentId }) {
   useEffect(() => {
     if (!studentId) return;
 
-    fetch(`http://127.0.0.1:8000/students/${studentId}/reinforcement`)
+    fetch(`${import.meta.env.VITE_API_URL}/students/${studentId}/reinforcement`)
       .then((response) => response.json())
       .then((data) => setInsight(data));
   }, [studentId]);

@@ -12,7 +12,7 @@ function StudentTransactionHistory({ studentId }) {
         }
 
         fetch(
-            `http://127.0.0.1:8000/students/${studentId}`
+            `${import.meta.env.VITE_API_URL}/students/${studentId}`
         )
             .then((response) => response.json())
             .then((data) => setStudent(data));

@@ -20,7 +20,7 @@ function TeacherClasses({
     async function loadClasses() {
 
         const response = await fetch(
-            `http://127.0.0.1:8000/teachers/${teacherId}/classes`
+            `${import.meta.env.VITE_API_URL}/teachers/${teacherId}/classes`
         );
 
         const data = await response.json();
@@ -57,7 +57,7 @@ function TeacherClasses({
 
 
         const response = await fetch(
-            "http://127.0.0.1:8000/classes",
+            `${import.meta.env.VITE_API_URL}/classes`,
             {
                 method: "POST",
 

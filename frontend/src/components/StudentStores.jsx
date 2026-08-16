@@ -13,7 +13,7 @@ function StudentStores({ studentId }) {
         try {
 
             const response = await fetch(
-                "http://127.0.0.1:8000/stores"
+                `${import.meta.env.VITE_API_URL}/stores`
             );
 
             const data = await response.json();
@@ -40,7 +40,7 @@ function StudentStores({ studentId }) {
         try {
 
             const response = await fetch(
-                `http://127.0.0.1:8000/stores/${storeId}/items`
+                `${import.meta.env.VITE_API_URL}/stores/${storeId}/items`
             );
 
             const data = await response.json();
@@ -91,7 +91,7 @@ function StudentStores({ studentId }) {
         try {
 
             const response = await fetch(
-                "http://127.0.0.1:8000/purchase-request",
+                `${import.meta.env.VITE_API_URL}/purchase-request`,
                 {
                     method: "POST",
 

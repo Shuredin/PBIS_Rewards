@@ -15,12 +15,12 @@ function ClassStudentList({ classId, teacherId, search, onSelect, title }) {
 
     if (classId === "all") {
 
-        url = "http://127.0.0.1:8000/school/students";
+        url = `${import.meta.env.VITE_API_URL}/school/students`;
 
     } else {
 
         url =
-        `http://127.0.0.1:8000/classes/${classId}/students`;
+        `${import.meta.env.VITE_API_URL}/classes/${classId}/students`;
 
     }
 

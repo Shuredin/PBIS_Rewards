@@ -8,7 +8,7 @@ function StudentDashboard({ studentId }) {
             return;
         }
 
-        fetch(`http://127.0.0.1:8000/students/${studentId}`)
+        fetch(`${import.meta.env.VITE_API_URL}/students/${studentId}`)
             .then((response) => response.json())
             .then((data) => setStudent(data));
     }, [studentId]);

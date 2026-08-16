@@ -13,7 +13,7 @@ function StudentTable({
   async function giveReward(studentId, amount) {
 
     const response = await fetch(
-      "http://127.0.0.1:8000/reward",
+      `${import.meta.env.VITE_API_URL}/reward`,
       {
         method: "POST",
 
@@ -52,7 +52,7 @@ function StudentTable({
     }
 
     const response = await fetch(
-        `http://127.0.0.1:8000/classes/${classId}/students/${studentId}`,
+        `${import.meta.env.VITE_API_URL}/classes/${classId}/students/${studentId}`,
         {
             method: "DELETE"
         }

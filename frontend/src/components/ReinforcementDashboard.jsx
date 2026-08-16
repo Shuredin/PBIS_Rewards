@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const giveReward = async (studentId) => {
-  await fetch("http://127.0.0.1:8000/reward", {
+  await fetch(`${import.meta.env.VITE_API_URL}/reward`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -25,7 +25,7 @@ function ReinforcementDashboard({ teacherId }) {
 
   async function loadRecommendations() {
   const response = await fetch(
-    "http://127.0.0.1:8000/students/recommendations"
+    `${import.meta.env.VITE_API_URL}/students/recommendations`
   );
 
   const data = await response.json();

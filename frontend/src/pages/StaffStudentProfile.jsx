@@ -11,14 +11,14 @@ function StaffStudentProfile({ studentId }) {
   useEffect(() => {
 
     fetch(
-      `http://127.0.0.1:8000/students/${studentId}`
+      `${import.meta.env.VITE_API_URL}/students/${studentId}`
     )
       .then((response) => response.json())
       .then((data) => setStudent(data));
 
 
     fetch(
-      `http://127.0.0.1:8000/students/${studentId}/reinforcement`
+      `${import.meta.env.VITE_API_URL}/students/${studentId}/reinforcement`
     )
       .then((response) => response.json())
       .then((data) => setAiData(data));

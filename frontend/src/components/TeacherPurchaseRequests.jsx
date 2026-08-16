@@ -15,7 +15,7 @@ function TeacherPurchaseRequests() {
   async function loadRequests() {
 
     const response = await fetch(
-      "http://127.0.0.1:8000/purchase-requests"
+      `${import.meta.env.VITE_API_URL}/purchase-requests`
     );
 
 
@@ -39,7 +39,7 @@ function TeacherPurchaseRequests() {
   async function updateRequest(id, status) {
 
     const response = await fetch(
-      `http://127.0.0.1:8000/purchase-requests/${id}?status=${status}`,
+      `${import.meta.env.VITE_API_URL}/purchase-requests/${id}?status=${status}`,
       {
         method: "PUT"
       }

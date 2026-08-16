@@ -15,7 +15,7 @@ function TeacherStorefront() {
   async function loadTeacherStore() {
 
     const response = await fetch(
-      "http://127.0.0.1:8000/teacher/store"
+      `${import.meta.env.VITE_API_URL}/teacher/store`
     );
 
     const data = await response.json();
@@ -31,7 +31,7 @@ function TeacherStorefront() {
   async function loadItems() {
 
     const response = await fetch(
-      "http://127.0.0.1:8000/storefront/items"
+      `${import.meta.env.VITE_API_URL}/storefront/items`
     );
 
 
@@ -44,7 +44,7 @@ function TeacherStorefront() {
   async function loadStores() {
 
   const response = await fetch(
-    "http://127.0.0.1:8000/stores"
+    `${import.meta.env.VITE_API_URL}/stores`
   );
 
   const data = await response.json();
@@ -72,7 +72,7 @@ function TeacherStorefront() {
     }
 
     await fetch(
-      "http://127.0.0.1:8000/storefront/items",
+      `${import.meta.env.VITE_API_URL}/storefront/items`,
       {
 
         method: "POST",
@@ -118,7 +118,7 @@ async function deleteItem(item) {
   }
 
   await fetch(
-    `http://127.0.0.1:8000/storefront/items/${item.id}`,
+    `${import.meta.env.VITE_API_URL}/storefront/items/${item.id}`,
     {
       method: "DELETE"
     }
@@ -141,7 +141,7 @@ function editItem(item) {
 async function updateItem() {
 
   const response = await fetch(
-    `http://127.0.0.1:8000/storefront/items/${editingItem.id}`,
+    `${import.meta.env.VITE_API_URL}/storefront/items/${editingItem.id}`,
     {
       method: "PUT",
 
