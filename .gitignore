@@ -8,3 +8,5 @@ __pycache__/
 
 # Environment variables
 .env
+
+PBIS_Rewards_Backup
